@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eye Test BD -- Vision Screening</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <h1 id="appTitle" data-i18n="appTitle">Eye Test BD</h1>
+    <p class="tagline" id="tagline" data-i18n="tagline">Check your vision at home</p>
+  </div>
+  <button id="langBtn" class="btn" type="button">Bangla</button>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button data-tab="test" class="tab active" type="button" data-i18n="tabTest">Test</button>
+  <button data-tab="results" class="tab" type="button" data-i18n="tabResults">Results</button>
+  <button data-tab="guide" class="tab" type="button" data-i18n="tabGuide">Guide</button>
+  <button data-tab="data" class="tab" type="button" data-i18n="tabData">Data</button>
+</nav>
+
+<main>
+  <!-- ============ TEST TAB ============ -->
+  <section id="tab-test" class="tabpage">
+    <div class="card">
+      <h2 data-i18n="calTitle">1. Calibrate your screen</h2>
+      <p class="help" data-i18n="calHelp"></p>
+      <label for="calSlider" data-i18n="calBarLabel">Match this bar to a real card</label>
+      <input id="calSlider" type="range" min="100" max="500" value="324" step="1">
+      <div id="calBar" class="cal-bar" aria-hidden="true"></div>
+      <p class="mono" id="calPxMm"></p>
+      <p class="mono" id="calH2020"></p>
+      <p id="calState" class="warn"></p>
+      <button id="useDefaultBtn" class="btn secondary" type="button" data-i18n="calUseDefault">Use default (uncalibrated)</button>
+    </div>
+
+    <div class="card">
+      <h2 data-i18n="acuityTitle">2. Distance vision (Snellen)</h2>
+      <p class="help" data-i18n="acuityHelp"></p>
+      <div class="row">
+        <label><span data-i18n="distLabel">Test distance</span>
+          <select id="distSelect">
+            <option value="2">2 m</option>
+            <option value="3" selected>3 m</option>
+            <option value="4">4 m</option>
+          </select>
+        </label>
+        <label><span data-i18n="eyeLabel">Which eye?</span>
+          <select id="eyeSelect">
+            <option value="left" data-i18n="eyeLeft">Left eye</option>
+            <option value="right" data-i18n="eyeRight">Right eye</option>
+            <option value="both" data-i18n="eyeBoth">Both eyes</option>
+          </select>
+        </label>
+      </div>
+      <p id="eyeNote" class="help"></p>
+      <div id="acuitySetup">
+        <button id="startAcuityBtn" class="btn primary" type="button" data-i18n="startAcuity">Start distance test</button>
+      </div>
+      <div id="acuityArea" hidden>
+        <p id="lineLabel" class="mono"></p>
+        <div id="trialLetter" class="trial-letter" aria-live="polite">E</div>
+        <p class="help" data-i18n="pickLetter">Which letter do you see?</p>
+        <div id="optGrid" class="opt-grid"></div>
+        <div class="row">
+          <button id="cantSeeBtn" class="btn secondary" type="button" data-i18n="cantSee">I can't see it</button>
+          <button id="restartBtn" class="btn secondary" type="button" data-i18n="restartBtn">Restart test</button>
+        </div>
+      </div>
+      <div id="acuityResult" hidden>
+        <h3 data-i18n="acuityDone">Distance test finished</h3>
+        <p id="acuityResultText" class="big"></p>
+        <p id="acuityBandText" class="band"></p>
+        <button id="saveAcuityBtn" class="btn primary" type="button" data-i18n="saveResult">Save result</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 data-i18n="nearTitle">3. Near vision</h2>
+      <p class="help" data-i18n="nearHelp"></p>
+      <div id="nearList"></div>
+      <div id="nearResult" hidden>
+        <p id="nearResultText" class="big"></p>
+        <button id="saveNearBtn" class="btn primary" type="button" data-i18n="saveResult">Save result</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 data-i18n="astigTitle">4. Astigmatism check</h2>
+      <p class="help" data-i18n="astigHelp"></p>
+      <svg id="astigFan" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Astigmatism dial"></svg>
+      <div class="row">
+        <button id="astigSameBtn" class="btn primary" type="button" data-i18n="astigSame">All lines look the same</button>
+        <button id="astigDarkerBtn" class="btn secondary" type="button" data-i18n="astigDarker">Some lines look darker / bolder</button>
+      </div>
+      <div id="astigDirRow" class="row" hidden>
+        <span data-i18n="astigDirLabel">Which direction looks darkest?</span>
+        <button class="btn small" type="button" data-astig-dir="vertical" data-i18n="astigDirV">Up-down lines</button>
+        <button class="btn small" type="button" data-astig-dir="horizontal" data-i18n="astigDirH">Left-right lines</button>
+        <button class="btn small" type="button" data-astig-dir="diagonal" data-i18n="astigDirD">Diagonal lines</button>
+      </div>
+      <div id="astigResult" hidden>
+        <p id="astigResultText" class="big"></p>
+        <button id="saveAstigBtn" class="btn primary" type="button" data-i18n="saveResult">Save result</button>
+      </div>
+    </div>
+
+    <p id="testMsg" class="ok"></p>
+    <p class="disclaimer" data-i18n="disclaimer"></p>
+    <p class="disclaimer" data-i18n="footerNote"></p>
+  </section>
+
+  <!-- ============ RESULTS TAB ============ -->
+  <section id="tab-results" class="tabpage" hidden>
+    <div class="card">
+      <h2 data-i18n="resultsTitle">Your results</h2>
+      <h3 data-i18n="latestTitle">Latest per eye</h3>
+      <div id="dashCards" class="dash-grid"></div>
+      <h3 data-i18n="historyTitle">History</h3>
+      <p id="noResults" class="help" data-i18n="noResults">No tests saved yet.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th data-i18n="colDate">Date</th>
+              <th data-i18n="colEye">Eye</th>
+              <th data-i18n="colTest">Test</th>
+              <th data-i18n="colResult">Result</th>
+              <th data-i18n="colAction"></th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GUIDE TAB ============ -->
+  <section id="tab-guide" class="tabpage" hidden>
+    <div class="card">
+      <h2 data-i18n="guideTitle">How to test your eyes at home</h2>
+      <p class="help" data-i18n="guideIntro"></p>
+      <h3 data-i18n="guideStepsTitle">Before you start</h3>
+      <ol id="guideSteps"></ol>
+      <h3 data-i18n="guideRedTitle">See an eye doctor soon if you notice</h3>
+      <ul id="guideReds"></ul>
+      <p class="disclaimer" data-i18n="disclaimer"></p>
+    </div>
+  </section>
+
+  <!-- ============ DATA TAB ============ -->
+  <section id="tab-data" class="tabpage" hidden>
+    <div class="card">
+      <h2 data-i18n="tabData">Data</h2>
+      <div class="row">
+        <button id="exportBtn" class="btn primary" type="button" data-i18n="exportBtn">Export JSON</button>
+        <label class="btn secondary file-label"><span data-i18n="importBtn">Import JSON</span>
+          <input id="importFile" type="file" accept=".json,application/json" hidden>
+        </label>
+      </div>
+      <p class="help" data-i18n="importFile">Choose a .json file exported by this app</p>
+      <p id="importMsg"></p>
+      <hr>
+      <h3 data-i18n="eraseBtn">Erase all data</h3>
+      <p class="help" data-i18n="eraseHelp"></p>
+      <div class="row">
+        <input id="eraseInput" type="text" placeholder="DELETE" autocomplete="off">
+        <button id="eraseBtn" class="btn danger" type="button" data-i18n="eraseBtn">Erase all data</button>
+      </div>
+      <p id="eraseMsg"></p>
+    </div>
+  </section>
+</main>
+
+<script src="js/logic.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
